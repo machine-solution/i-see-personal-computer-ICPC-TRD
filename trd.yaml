@@ -1,0 +1,31 @@
+team: "St. Petersburg SU: I See Personal Computer (Korotchenko, Moskalenko, Zaitsev)"
+contest_title: "ICPC 2026"
+problems: "A-N"
+
+include:
+  - "**/*.h"
+
+exclude:
+  - "**/_*.h"
+  - "**/*.draft.h"
+
+fonts:
+  header: "\\large"
+  contest_title: "\\Large"
+  problem_table: "\\large"
+  toc_title: "\\LARGE"
+  toc_section: "\\large"
+  toc_subsection: "\\normalsize"
+  section: "\\LARGE"
+  subsection: "\\Large"
+  code: "\\normalsize"
+
+layout:
+  columns: 2
+  left_margin: "1.0cm"
+  right_margin: "1.0cm"
+  top_margin: "0.7cm"
+  bottom_margin: "0.7cm"
+  head_height: "16pt"
+  head_sep: "8pt"
+  column_sep: "0.7cm"
