@@ -47,7 +47,7 @@ struct DisjointSparseTable {
     }
 
     DisjointSparseTable(const vector<ll>& a) {
-        ll n = (ll)a.size();
+        ll n = a.size();
         ll k = 0;
         ll nn = 1;
         while (nn <= n) {
