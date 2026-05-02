@@ -55,21 +55,21 @@ struct DisjointSparseTable {
             nn <<= 1;
         }
 
-        dp.assign((int)k, vector<ll>((int)n + 1, neutral()));
+        dp.assign(k, vector<ll>(n + 1, neutral()));
 
         ll t = 0;
         for (ll len = 1; len <= n; len <<= 1, ++t) {
             for (ll cent = len; cent <= n; cent += len * 2) {
                 // left part (including cent-1)
-                dp[(int)t][(int)(cent - 1)] = a[(int)(cent - 1)];
+                dp[t][(cent - 1)] = a[(cent - 1)];
                 for (ll i = cent - 2; i >= cent - len; --i) {
-                    dp[(int)t][(int)i] = merge(a[(int)i], dp[(int)t][(int)(i + 1)]);
+                    dp[t][i] = merge(a[i], dp[t][(i + 1)]);
                 }
 
                 // right part: dp[t][cent] is neutral for empty prefix
-                dp[(int)t][(int)cent] = neutral();
+                dp[t][cent] = neutral();
                 for (ll i = cent + 1; i < min(cent + len, n + 1); ++i) {
-                    dp[(int)t][(int)i] = merge(dp[(int)t][(int)(i - 1)], a[(int)(i - 1)]);
+                    dp[t][i] = merge(dp[t][(i - 1)], a[(i - 1)]);
                 }
             }
         }
@@ -80,6 +80,6 @@ struct DisjointSparseTable {
         if (r <= l)
             return neutral();
         ll t = 63 - __builtin_clzll((ull)(l ^ r));
-        return merge(dp[(int)t][(int)l], dp[(int)t][(int)r]);
+        return merge(dp[t][l], dp[t][r]);
     }
 };
