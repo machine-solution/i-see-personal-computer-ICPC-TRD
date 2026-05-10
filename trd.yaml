@@ -6,6 +6,9 @@ include:
   - "**/*.h"
 
 exclude:
+  - "**/Segment Tree Simple.h"
+  - "**/Segment Tree Mass Simple.h"
+  - "**/Ordered Set.h"
   - "**/_*.h"
   - "**/*.draft.h"
 
