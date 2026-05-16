@@ -42,6 +42,7 @@ void precalc_ws(ll lg_n) {
         ll n = (1ll << l);
         w[l].resize(n / 2);
 
+        // need cosl, sinl for complex<ld>
         comp fw(cos(2 * PI / n), sin(2 * PI / n));
         for (int j = 0; j < (n >> 1); ++j) {
             if (j % 2 == 0) {
@@ -109,6 +110,7 @@ vector<ll> vect_mult(const vector<ll>& a, const vector<ll>& b) {
 
     vector<ll> mult(sz);
     for (int i = 0; i < sz; ++i) {
+        // need roundl for complex<ld>
         mult[i] = round(p[i].imag() / 2);
     }
     return mult;
