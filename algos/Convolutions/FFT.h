@@ -21,7 +21,7 @@ using namespace std;
 using ll = long long;
 using ld = long double;
 using ull = unsigned long long;
-using comp = complex<ld>;
+using comp = complex<double>;
 
 const ld PI = atan2(0, -1);
 ll const inf = 1e18;
@@ -33,37 +33,47 @@ mt19937 mersenne(rd());
 
 // includes
 
-int bit_rev(int num, int lg_n) {
-    int res = 0;
-    for (int i = 0; i < lg_n; ++i)
-        if (num & (1 << i))
-            res |= 1 << (lg_n - 1 - i);
-    return res;
-}
+vector<vector<comp>> w;
 
-// FFT
-void fft_inpl(vector<comp>& a, bool invert) {
-    int n = a.size();
-    int lg_n = 0;
-    while ((1 << lg_n) < n)
-        ++lg_n;
+void precalc_ws(ll lg_n) {
+    w.resize(lg_n + 1);
+    w[0].resize(1, 1);
+    for (int l = 1; l <= lg_n; ++l) {
+        ll n = (1ll << l);
+        w[l].resize(n / 2);
 
-    for (int i = 0; i < n; ++i) {
-        if (i < bit_rev(i, lg_n)) {
-            swap(a[i], a[bit_rev(i, lg_n)]);
+        comp fw(cos(2 * PI / n), sin(2 * PI / n));
+        for (int j = 0; j < (n >> 1); ++j) {
+            if (j % 2 == 0) {
+                w[l][j] = w[l - 1][j / 2];
+            } else {
+                w[l][j] = w[l - 1][j / 2] * fw;
+            }
         }
     }
+}
 
-    for (int len = 2; len <= n; len <<= 1) {
-        double ang = 2 * PI / len * (invert ? -1 : 1);
-        comp w(cos(ang), sin(ang));
+void fft_inpl(vector<comp>& a, bool invert) {
+    int n = a.size();
+
+    for (int i = 1, j = 0; i < n; ++i) {
+        int bit = n >> 1;
+        for (; j & bit; bit >>= 1)
+            j ^= bit;
+        j ^= bit;
+        if (i < j)
+            swap(a[i], a[j]);
+    }
+
+    for (int len = 2, lg = 1; len <= n; len <<= 1, ++lg) {
         for (int i = 0; i < n; i += len) {
-            comp wn(1);
-            for (int j = 0; j < len / 2; ++j) {
-                comp u = a[i + j], v = a[i + j + len / 2] * wn;
+            for (int j = 0; j < (len >> 1); ++j) {
+                comp root = w[lg][j];
+                if (invert)
+                    root = conj(root);
+                comp u = a[i + j], v = a[i + j + (len >> 1)] * root;
                 a[i + j] = u + v;
-                a[i + j + len / 2] = u - v;
-                wn *= w;
+                a[i + j + (len >> 1)] = u - v;
             }
         }
     }
@@ -77,30 +87,29 @@ void fft_inpl(vector<comp>& a, bool invert) {
 vector<ll> vect_mult(const vector<ll>& a, const vector<ll>& b) {
     ll sz = a.size() + b.size() - 1;
     ll n = 1;
+    int lg_n = 0;
     while (n < sz) {
         n <<= 1;
+        ++lg_n;
+    }
+    if (w.size() <= lg_n) {
+        precalc_ws(lg_n);
     }
 
-    vector<comp> fa(n, 0), fb(n, 0);
+    vector<comp> p(n, 0);
     for (int i = 0; i < n; ++i) {
-        if (i < a.size()) {
-            fa[i] = comp(a[i], 0);
-        }
-        if (i < b.size()) {
-            fb[i] = comp(b[i], 0);
-        }
+        p[i] = comp(i < a.size() ? a[i] : 0, i < b.size() ? b[i] : 0);
     }
 
-    fft_inpl(fa, false);
-    fft_inpl(fb, false);
+    fft_inpl(p, false);
     for (int i = 0; i < n; ++i) {
-        fa[i] *= fb[i];
+        p[i] *= p[i];
     }
-    fft_inpl(fa, true);
+    fft_inpl(p, true);
 
     vector<ll> mult(sz);
     for (int i = 0; i < sz; ++i) {
-        mult[i] = round(fa[i].real());
+        mult[i] = round(p[i].imag() / 2);
     }
     return mult;
 }

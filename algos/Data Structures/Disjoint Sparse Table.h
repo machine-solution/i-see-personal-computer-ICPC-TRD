@@ -60,16 +60,14 @@ struct DisjointSparseTable {
         ll t = 0;
         for (ll len = 1; len <= n; len <<= 1, ++t) {
             for (ll cent = len; cent <= n; cent += len * 2) {
-                // left part (including cent-1)
-                dp[t][(cent - 1)] = a[(cent - 1)];
+                dp[t][cent - 1] = a[cent - 1];
                 for (ll i = cent - 2; i >= cent - len; --i) {
-                    dp[t][i] = merge(a[i], dp[t][(i + 1)]);
+                    dp[t][i] = merge(a[i], dp[t][i + 1]);
                 }
 
-                // right part: dp[t][cent] is neutral for empty prefix
                 dp[t][cent] = neutral();
                 for (ll i = cent + 1; i < min(cent + len, n + 1); ++i) {
-                    dp[t][i] = merge(dp[t][(i - 1)], a[(i - 1)]);
+                    dp[t][i] = merge(dp[t][i - 1], a[i - 1]);
                 }
             }
         }
