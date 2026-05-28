@@ -79,8 +79,9 @@ void fft_inpl(vector<comp>& a, bool invert) {
         }
     }
     if (invert) {
+        double rev_n = 1.0 / n;
         for (int i = 0; i < n; ++i) {
-            a[i] /= n;
+            a[i] *= rev_n;
         }
     }
 }
@@ -111,7 +112,7 @@ vector<ll> vect_mult(const vector<ll>& a, const vector<ll>& b) {
     vector<ll> mult(sz);
     for (int i = 0; i < sz; ++i) {
         // need roundl for complex<ld>
-        mult[i] = round(p[i].imag() / 2);
+        mult[i] = round(p[i].imag() * 0.5);
     }
     return mult;
 }
