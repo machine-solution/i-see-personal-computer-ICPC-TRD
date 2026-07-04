@@ -32,17 +32,21 @@ struct SATSolver {
 
     void init(ll N) {
         n = N;
-        g.assign((int)(2 * n), {});
-        gt.assign((int)(2 * n), {});
+        g.assign(2 * n, {});
+        gt.assign(2 * n, {});
     }
 
     // literal: var in [0..n), val=false -> 2*var, val=true -> 2*var+1
-    ll lit(ll var, ll val) { return 2 * var + (val ? 1 : 0); }
-    ll neg(ll x) { return x ^ 1; }
+    ll lit(ll var, ll val) {
+        return 2 * var + (val ? 1 : 0);
+    }
+    ll neg(ll x) {
+        return x ^ 1;
+    }
 
     void add_imp(ll a, ll b) {
-        g[(int)a].push_back(b);
-        gt[(int)b].push_back(a);
+        g[a].push_back(b);
+        gt[b].push_back(a);
     }
 
     // (a_var is a_val) OR (b_var is b_val)
@@ -54,35 +58,42 @@ struct SATSolver {
     }
 
     void dfs1(ll v) {
-        used[(int)v] = 1;
-        for (ll to : g[(int)v]) if (!used[(int)to]) dfs1(to);
+        used[v] = 1;
+        for (ll to : g[v])
+            if (!used[to])
+                dfs1(to);
         order.push_back(v);
     }
 
     void dfs2(ll v, ll cl) {
-        comp[(int)v] = cl;
-        for (ll to : gt[(int)v]) if (comp[(int)to] == -1) dfs2(to, cl);
+        comp[v] = cl;
+        for (ll to : gt[v])
+            if (comp[to] == -1)
+                dfs2(to, cl);
     }
 
     // returns empty vector if unsat; otherwise assignment[i] in {0,1}
     vector<ll> solve() {
-        used.assign((int)(2 * n), 0);
+        used.assign(2 * n, 0);
         order.clear();
-        for (ll i = 0; i < 2 * n; ++i) if (!used[(int)i]) dfs1(i);
+        for (ll i = 0; i < 2 * n; ++i)
+            if (!used[i])
+                dfs1(i);
 
-        comp.assign((int)(2 * n), -1);
+        comp.assign(2 * n, -1);
         ll j = 0;
         for (ll i = 2 * n - 1; i >= 0; --i) {
-            ll v = order[(int)i];
-            if (comp[(int)v] == -1) dfs2(v, j++);
+            ll v = order[i];
+            if (comp[v] == -1)
+                dfs2(v, j++);
         }
 
-        vector<ll> ans((int)n);
+        vector<ll> ans(n);
         for (ll i = 0; i < n; ++i) {
-            if (comp[(int)(2 * i)] == comp[(int)(2 * i + 1)]) return {};
-            ans[(int)i] = (comp[(int)(2 * i)] < comp[(int)(2 * i + 1)]);
+            if (comp[2 * i] == comp[2 * i + 1])
+                return {};
+            ans[i] = (comp[2 * i] < comp[2 * i + 1]);
         }
         return ans;
     }
 };
-

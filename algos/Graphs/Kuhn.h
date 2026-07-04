@@ -33,7 +33,7 @@ mt19937 mersenne(rd());
 
 // includes
 
-bool kuhn_dfs(int v, vector<char>& used, char mark, vector<vector<int>>& g, vector<int>& mt) {
+bool kuhn_dfs(int v, vector<int>& used, int mark, vector<vector<int>>& g, vector<int>& mt) {
     if (used[v] == mark) {
         return false;
     }
@@ -49,7 +49,7 @@ bool kuhn_dfs(int v, vector<char>& used, char mark, vector<vector<int>>& g, vect
 }
 
 vector<int> kuhn(int n1, int n2, vector<vector<int>>& g) {
-    vector<char> used(n1, 0);
+    vector<int> used(n1, 0);
     vector<int> mt(n2, -1);
 
     int mark = 1;
