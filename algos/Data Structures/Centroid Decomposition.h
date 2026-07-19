@@ -37,25 +37,25 @@ struct CentroidDecomp {
     ll n;
     vector<ll> parent;
 
-    void calc_sizes(ll v, vector<char>& used, vector<vector<ll>>& g, vector<ll>& s) {
+    void calc_sizes(ll v, ll mark, vector<ll>& used, vector<vector<ll>>& g, vector<ll>& s) {
         s[v] = 1;
-        used[v] = 1;
+        used[v] = mark;
 
         for (ll u : g[v]) {
-            if (!used[u]) {
-                calc_sizes(u, used, g, s);
+            if (used[u] < mark) {
+                calc_sizes(u, mark, used, g, s);
                 s[v] += s[u];
             }
         }
     }
 
-    ll find_centroid(ll v, vector<char>& used, vector<vector<ll>>& g, vector<ll>& s, ll sz) {
-        used[v] = 1;
+    ll find_centroid(ll v, ll mark, vector<ll>& used, vector<vector<ll>>& g, vector<ll>& s, ll sz) {
+        used[v] = mark;
 
         for (ll u : g[v]) {
-            if (!used[u]) {
+            if (used[u] < mark) {
                 if (s[u] > sz / 2) {
-                    return find_centroid(u, used, g, s, sz);
+                    return find_centroid(u, mark, used, g, s, sz);
                 }
             }
         }
@@ -63,14 +63,14 @@ struct CentroidDecomp {
         return v;
     }
 
-    void set_parent(ll v, vector<char>& used, vector<vector<ll>>& g, ll cent) {
+    void set_parent(ll v, ll mark, vector<ll>& used, vector<vector<ll>>& g, ll cent) {
         if (v != cent)
             parent[v] = cent;
-        used[v] = 1;
+        used[v] = mark;
 
         for (ll u : g[v]) {
-            if (!used[u]) {
-                set_parent(u, used, g, cent);
+            if (used[u] < mark) {
+                set_parent(u, mark, used, g, cent);
             }
         }
     }
@@ -79,22 +79,25 @@ struct CentroidDecomp {
         n = N;
         parent.assign(n, -1);
 
-        vector<char> cused(n, 0);
+        vector<ll> used(n, 0);
         vector<ll> s(n, 0);
         ll cnt_used = 0;
+        ll mark = 0;
 
         while (cnt_used < n) {
-            vector<char> sused = cused, used = cused, pused = cused;
-
+            ++mark;
+            ll pass_mark = mark;
             for (int i = 0; i < n; ++i) {
-                if (!sused[i]) {
-                    calc_sizes(i, sused, g, s);
-                    ll cent = find_centroid(i, used, g, s, s[i]);
+                if (used[i] >= pass_mark)
+                    continue;
+                calc_sizes(i, pass_mark, used, g, s);
+                ++mark;
+                ll cent = find_centroid(i, mark, used, g, s, s[i]);
 
-                    cused[cent] = 1;
-                    ++cnt_used;
-                    set_parent(i, pused, g, cent);
-                }
+                ++mark;
+                set_parent(i, mark, used, g, cent);
+                used[cent] = inf;
+                ++cnt_used;
             }
         }
     }

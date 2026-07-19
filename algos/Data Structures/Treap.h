@@ -22,10 +22,10 @@ using ll = long long;
 using ld = long double;
 using ull = unsigned long long;
 
+// includes
+
 random_device rd;
 mt19937 mersenne(rd());
-
-// includes
 
 struct Treap {
     Treap* left;

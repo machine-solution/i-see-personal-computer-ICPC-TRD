@@ -22,13 +22,15 @@ using ll = long long;
 using ld = long double;
 using ull = unsigned long long;
 
+const ll inf = 1e18;
+
 // includes
 
 struct SegmentTree {
     struct Node {
-        ll sum;
+        ll val;
 
-        Node(ll Sum = 0) : sum(Sum) {
+        Node(ll Val = inf) : val(Val) {
         }
     };
 
@@ -60,7 +62,7 @@ struct SegmentTree {
     }
 
     Node merge(Node n1, Node n2) {
-        return Node(n1.sum + n2.sum);
+        return Node(min(n1.val, n2.val));
     }
 
     Node query(ll v, ll l, ll r, ll ql, ll qr) {
@@ -94,5 +96,24 @@ struct SegmentTree {
 
     void change(ll id, ll val) {
         change(0, 0, n, id, val);
+    }
+
+    ll descent(ll v, ll l, ll r, ll ql, ll qr, ll x) {
+        if (r <= ql || qr <= l)
+            return -1;
+        if (tree[v].val >= x)
+            return -1;
+        if (l + 1 == r)
+            return l;
+
+        ll m = (l + r) / 2;
+        ll left = descent(v * 2 + 1, l, m, ql, qr, x);
+        if (left != -1)
+            return left;
+        return descent(v * 2 + 2, m, r, ql, qr, x);
+    }
+
+    ll descent(ll ql, ll qr, ll x) {
+        return descent(0, 0, n, ql, qr, x);
     }
 };

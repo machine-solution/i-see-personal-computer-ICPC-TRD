@@ -21,8 +21,6 @@ vector<ll> calc_lcp(ll n, const string& s, const vector<ll>& c, const vector<ll>
     for (int i = 0; i < n - 1; ++i) {
         ll pos = c[i];
         ll j = p[pos - 1];
-        // j .. i
-
         while (i + pref < n && j + pref < n && s[i + pref] == s[j + pref]) {
             ++pref;
         }

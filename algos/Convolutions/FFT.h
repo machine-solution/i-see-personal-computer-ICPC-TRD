@@ -70,8 +70,8 @@ void fft_inpl(vector<comp>& a, bool invert) {
         for (int i = 0; i < n; i += len) {
             for (int j = 0; j < (len >> 1); ++j) {
                 comp root = w[lg][j];
-                if (invert)
-                    root = conj(root);
+                if (invert && j)
+                    root = -w[lg][(len >> 1) - j];
                 comp u = a[i + j], v = a[i + j + (len >> 1)] * root;
                 a[i + j] = u + v;
                 a[i + j + (len >> 1)] = u - v;

@@ -28,15 +28,15 @@ const ll inf = 1e18;
 
 struct SegmentTreeBeats {
     struct Node {
-        ll sum = 0;
+        ll val = 0;
         ll firstMax = -inf;
         ll cntMax = 0;
         ll secondMax = -inf;
 
         ll min_eq = inf;
 
-        Node(ll Sum = 0, ll FirstMax = -inf, ll CntMax = 0, ll SecondMax = -inf) {
-            sum = Sum;
+        Node(ll Val = 0, ll FirstMax = -inf, ll CntMax = 0, ll SecondMax = -inf) {
+            val = Val;
             firstMax = FirstMax;
             cntMax = CntMax;
             secondMax = SecondMax;
@@ -65,7 +65,7 @@ struct SegmentTreeBeats {
     }
 
     Node merge(Node n1, Node n2) {
-        Node res(n1.sum + n2.sum);
+        Node res(n1.val + n2.val);
 
         if (n1.firstMax > n2.firstMax) {
             res.firstMax = n1.firstMax;
@@ -132,7 +132,7 @@ struct SegmentTreeBeats {
     void apply(ll v, ll l, ll r, ll val) {
         // only if tagCondition() == true
         ll diff = min(tree[v].firstMax, val) - tree[v].firstMax;
-        tree[v].sum += tree[v].cntMax * diff;
+        tree[v].val += tree[v].cntMax * diff;
         tree[v].firstMax += diff;
 
         tree[v].min_eq = min(val, tree[v].min_eq);
@@ -164,5 +164,31 @@ struct SegmentTreeBeats {
 
     void update(ll ql, ll qr, ll val) {
         update(0, 0, n, ql, qr, val);
+    }
+
+    pair<ll, ll> descent(ll v, ll l, ll r, ll ql, ll qr, ll x) {
+        if (r <= ql || qr <= l)
+            return {-1, x};
+        if (ql <= l && r <= qr) {
+            if (tree[v].val < x)
+                return {-1, x - tree[v].val};
+            if (l + 1 == r)
+                return {l + 1, x};
+        }
+        if (l + 1 == r)
+            return {-1, x};
+
+        ll m = (r + l) / 2;
+        push(v, l, r);
+        auto left = descent(v * 2 + 1, l, m, ql, qr, x);
+        if (left.first != -1)
+            return left;
+        return descent(v * 2 + 2, m, r, ql, qr, left.second);
+    }
+
+    ll descent(ll ql, ll qr, ll x) {
+        if (x <= 0)
+            return ql;
+        return descent(0, 0, n, ql, qr, x).first;
     }
 };

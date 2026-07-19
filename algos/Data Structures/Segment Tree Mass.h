@@ -22,20 +22,22 @@ using ll = long long;
 using ld = long double;
 using ull = unsigned long long;
 
+const ll inf = 1e18;
+
 // includes
 
 struct SegmentTreeMass {
     struct Node {
-        ll sum = 0;
+        ll val = inf;
         ll add = 0;
 
-        Node(ll Sum = 0, ll Add = 0) {
-            sum = Sum;
+        Node(ll Val = inf, ll Add = 0) {
+            val = Val;
             add = Add;
         }
     };
 
-    Node neutral = Node();
+    Node neutral = Node(inf, 0);
     ll n;
     vector<Node> tree;
 
@@ -53,7 +55,7 @@ struct SegmentTreeMass {
     }
 
     Node merge(Node n1, Node n2) {
-        return Node(n1.sum + n2.sum);
+        return Node(min(n1.val, n2.val));
     }
 
     void fix(ll v, ll l, ll r) {
@@ -62,7 +64,7 @@ struct SegmentTreeMass {
 
     void apply(ll v, ll l, ll r, ll val) {
         tree[v].add += val;
-        tree[v].sum += val * (r - l);
+        tree[v].val += val;
     }
 
     void push(ll v, ll l, ll r) {
@@ -125,5 +127,25 @@ struct SegmentTreeMass {
 
     void add(ll ql, ll qr, ll val) {
         add(0, 0, n, ql, qr, val);
+    }
+
+    ll descent(ll v, ll l, ll r, ll ql, ll qr, ll x) {
+        if (r <= ql || qr <= l)
+            return -1;
+        if (tree[v].val >= x)
+            return -1;
+        if (l + 1 == r)
+            return l;
+
+        ll m = (r + l) / 2;
+        push(v, l, r);
+        ll left = descent(v * 2 + 1, l, m, ql, qr, x);
+        if (left != -1)
+            return left;
+        return descent(v * 2 + 2, m, r, ql, qr, x);
+    }
+
+    ll descent(ll ql, ll qr, ll x) {
+        return descent(0, 0, n, ql, qr, x);
     }
 };

@@ -35,7 +35,6 @@ ll rev(ll a);
 
 const ll MOD = 998244353;
 const ll ROOT = 31;
-const ll REV_ROOT = rev(ROOT);
 const int ROOT_PW = (1ll << 23);
 
 vector<vector<ll>> w;
@@ -78,8 +77,8 @@ void fft_inpl(vector<ll>& a, bool invert) {
         for (int i = 0; i < n; i += len) {
             for (int j = 0; j < (len >> 1); ++j) {
                 ll root = w[lg][j];
-                if (invert) {
-                    root = rev(root);
+                if (invert && j) {
+                    root = MOD - w[lg][(len >> 1) - j];
                 }
                 ll u = a[i + j], v = (a[i + j + len / 2] * root) % MOD;
                 a[i + j] = u + v < MOD ? u + v : u + v - MOD;

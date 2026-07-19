@@ -33,11 +33,10 @@ mt19937 mersenne(rd());
 
 // includes
 
-ll floor_div(ll a, ll b) {
-    // b > 0
+ll floor_div(ll a, ll b) { // b > 0
     if (a >= 0)
         return a / b;
-    return -((-a + b - 1) / b);
+    return (a - b + 1) / b;
 }
 
 // sum_{x=0}^{n-1} floor((a*x + b) / m), m > 0
