@@ -86,7 +86,7 @@ pair<ll, vector<int>> matroidIntersection(Matroid& m0, Matroid& m1, const vector
                 }
             }
         }
-        if (~prv[n + 1] && dist[n + 1] > 0) {  // alarm: delete  && dist[n + 1] > 0 if want max size
+        if (~prv[n + 1]) {
             for (int u = n + 1; (u = prv[u]) != n;)
                 on[u] ^= 1;
         } else {
