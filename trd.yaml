@@ -8,7 +8,10 @@ include:
 exclude:
   - "**/Segment Tree Simple.h"
   - "**/Segment Tree Mass Simple.h"
+  - "**/Segment Tree.h"
+  - "**/Segment Tree Mass.h"
   - "**/Ordered Set.h"
+  - "**/Sparse Table.h"
   - "**/_*.h"
   - "**/*.draft.h"
 
