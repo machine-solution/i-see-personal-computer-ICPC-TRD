@@ -77,7 +77,7 @@ struct DisjointSparseTable {
     ll query(ll l, ll r) {
         if (r <= l)
             return neutral();
-        ll t = 63 - __builtin_clzll((ull)(l ^ r));
+        ll t = 63 - __builtin_clzll(l ^ r);
         return merge(dp[t][l], dp[t][r]);
     }
 };

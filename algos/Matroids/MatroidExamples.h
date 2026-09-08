@@ -213,7 +213,7 @@ struct PartitionMatroid : Matroid {
     }
     vector<int> circuit(int i0) const override {
         const int c = colors[i0];
-        if (static_cast<int>(iss[c].size()) == lims[c]) {
+        if (iss[c].size() == lims[c]) {
             vector<int> is = iss[c];
             is.push_back(i0);
             return is;

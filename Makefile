@@ -23,16 +23,12 @@ gen-pdf: gen-tex
 		echo "pdflatex not found. Install TeX to build PDF (TeX Live / MacTeX / MiKTeX)."; \
 		exit 1; \
 	}
-	@pdflatex -shell-escape -interaction=nonstopmode -halt-on-error -output-directory=build $(TEX_OUT) || { \
-		echo ""; \
-		echo "pdflatex failed. See build/trd.generated.log for details."; \
-		exit 1; \
-	}
-	@pdflatex -shell-escape -interaction=nonstopmode -halt-on-error -output-directory=build $(TEX_OUT) || { \
-		echo ""; \
-		echo "pdflatex failed on 2nd pass. See build/trd.generated.log for details."; \
-		exit 1; \
-	}
+	@for pass in 1 2 3; do \
+		pdflatex -shell-escape -interaction=nonstopmode -halt-on-error -output-directory=build $(TEX_OUT) || { \
+			echo "pdflatex failed on pass $$pass. See build/trd.generated.log."; \
+			exit 1; \
+		}; \
+	done
 	@cp -f $(PDF_OUT) $(TRD_PDF)
 	@echo "Generated: $(TRD_PDF)"
 

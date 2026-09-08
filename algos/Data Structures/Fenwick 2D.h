@@ -37,7 +37,7 @@ struct Fenwick2D {
     void init(int n_, int m_) {
         n = n_;
         m = m_;
-        bit.assign((int)n + 1, vector<T>((int)m + 1, T{}));
+        bit.assign(n + 1, vector<T>(m + 1, T{}));
     }
 
     // add delta at (x, y), 0-indexed

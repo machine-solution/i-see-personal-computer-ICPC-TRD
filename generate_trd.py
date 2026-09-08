@@ -29,6 +29,7 @@ DEFAULT = {
     "team": "Team",
     "contest_title": "ICPC 2026",
     "problems": "A-N",
+    "show_tables": True,
     "include": ["**/*.h"],
     "exclude": [],
     "fonts": {},
@@ -161,7 +162,9 @@ Time & Andrey & Taisia & Timofey \\
 def generate(cfg, sections):
     f = cfg["fonts"]
     l = cfg["layout"]
-    probs = parse_range(cfg["problems"])
+    columns = l.get("columns", 2)
+    if not isinstance(columns, int) or not 2 <= columns <= 10:
+        raise ValueError("layout.columns must be an integer from 2 to 10")
     team = tex_escape(cfg["team"])
 
     out = []
@@ -239,10 +242,11 @@ def generate(cfg, sections):
     # Ensure header is present on first page too.
     out.append(r"\pagestyle{fancy}")
     out.append(r"\thispagestyle{fancy}")
-    out.append(r"\begin{multicols}{2}")
-
-    out.append(table(probs, cfg))
-    out.append(timeline_table(cfg))
+    # Tables use full page width, independent of the number of code columns.
+    if cfg.get("show_tables", True):
+        out.append(table(parse_range(cfg["problems"]), cfg))
+        out.append(timeline_table(cfg))
+    out.append(rf"\begin{{multicols}}{{{columns}}}")
     out.append(r"\tableofcontents")
     out.append(r"\vspace{0.5em}")
 
@@ -270,7 +274,7 @@ def main():
     OUTPUT_TEX.write_text(generate(cfg, sections))
 
     print("OK → build/trd.generated.tex")
-    print("compile twice:")
+    print("compile three times to stabilize the table of contents:")
     print("pdflatex -output-directory=build build/trd.generated.tex")
 
 

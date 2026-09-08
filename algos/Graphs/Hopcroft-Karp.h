@@ -42,25 +42,25 @@ struct HopcroftKarp {
     void init(ll N1, ll N2) {
         n1 = N1;
         n2 = N2;
-        g.assign((int)n1, {});
-        mt1.assign((int)n1, -1);
-        mt2.assign((int)n2, -1);
-        dist.assign((int)n1, 0);
+        g.assign(n1, {});
+        mt1.assign(n1, -1);
+        mt2.assign(n2, -1);
+        dist.assign(n1, 0);
     }
 
     void add_edge(ll u, ll v) {
         // u in [0..n1), v in [0..n2)
-        g[(int)u].push_back(v);
+        g[u].push_back(v);
     }
 
     bool bfs() {
         queue<ll> q;
         for (ll i = 0; i < n1; ++i) {
-            if (mt1[(int)i] == -1) {
-                dist[(int)i] = 0;
+            if (mt1[i] == -1) {
+                dist[i] = 0;
                 q.push(i);
             } else {
-                dist[(int)i] = -1;
+                dist[i] = -1;
             }
         }
 
@@ -69,12 +69,12 @@ struct HopcroftKarp {
             ll v = q.front();
             q.pop();
 
-            for (ll to : g[(int)v]) {
-                ll u = mt2[(int)to];
+            for (ll to : g[v]) {
+                ll u = mt2[to];
                 if (u == -1) {
                     found = true;
-                } else if (dist[(int)u] == -1) {
-                    dist[(int)u] = dist[(int)v] + 1;
+                } else if (dist[u] == -1) {
+                    dist[u] = dist[v] + 1;
                     q.push(u);
                 }
             }
@@ -83,15 +83,15 @@ struct HopcroftKarp {
     }
 
     bool dfs(ll v) {
-        for (ll to : g[(int)v]) {
-            ll u = mt2[(int)to];
-            if (u == -1 || (dist[(int)u] == dist[(int)v] + 1 && dfs(u))) {
-                mt1[(int)v] = to;
-                mt2[(int)to] = v;
+        for (ll to : g[v]) {
+            ll u = mt2[to];
+            if (u == -1 || (dist[u] == dist[v] + 1 && dfs(u))) {
+                mt1[v] = to;
+                mt2[to] = v;
                 return true;
             }
         }
-        dist[(int)v] = -1;
+        dist[v] = -1;
         return false;
     }
 
@@ -99,7 +99,7 @@ struct HopcroftKarp {
         ll matching = 0;
         while (bfs()) {
             for (ll i = 0; i < n1; ++i) {
-                if (mt1[(int)i] == -1) {
+                if (mt1[i] == -1) {
                     if (dfs(i)) {
                         ++matching;
                     }

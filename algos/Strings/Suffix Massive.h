@@ -87,7 +87,7 @@ vector<ll> suffix_array(string s) {
     }
 
     vector<ll> ans;
-    ans.reserve((int)n - 1);
+    ans.reserve(n - 1);
     for (int i = 1; i < n; ++i)
         ans.push_back(p[i]);
     return ans;

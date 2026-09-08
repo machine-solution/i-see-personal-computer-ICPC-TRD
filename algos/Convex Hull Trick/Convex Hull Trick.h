@@ -79,7 +79,7 @@ struct ConvexHullTrick {
         if (a.empty()) {
             return -inf;
         }
-        ll l = 0, r = (ll)a.size();
+        ll l = 0, r = a.size();
         while (r - l > 1) {
             ll m = (r + l) / 2;
             if (p[m - 1] <= x) {

@@ -94,6 +94,11 @@ Edit `trd.yaml`. Example keys:
 - `team`: header (left) on each page
 - `problems`: `"A-N"` or `"A,B,C"`
 - `include` / `exclude`: file selection rules
+- `show_tables`: show the problem tracking and team timeline tables (default: `true`; currently disabled)
+- `layout.columns`: number of code columns, from 2 to 10 (currently 3)
+- `fonts.code`: LaTeX code font size (currently `\small`, 9 pt in the 10 pt document)
+
+Set `show_tables: true` in `trd.yaml` to restore both tables. Tables use the full page width; the table of contents is always retained.
 
 Important: patterns are matched against paths relative to `algos/`.
 
