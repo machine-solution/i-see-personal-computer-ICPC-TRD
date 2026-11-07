@@ -49,6 +49,28 @@ struct FlowSolver {
         edges.push_back({v, u, 0, 0, -c});
     }
 
+    void ford_bellman(ll s, vector<ll>& d) {
+        d.assign(n, 0);
+
+        bool change = true;
+        while (change) {
+            change = false;
+
+            for (ll id = 0; id < edges.size(); ++id) {
+                if (edges[id].cap == edges[id].flow) {
+                    continue;
+                }
+
+                ll v = edges[id].a;
+                ll u = edges[id].b;
+                if (d[u] > d[v] + edges[id].cost) {
+                    change = true;
+                    d[u] = d[v] + edges[id].cost;
+                }
+            }
+        }
+    }
+
     bool dijkstra(ll s, ll t, vector<ll>& d, vector<ll>& par) {
         vector<ll> nd(n, inf);
         par.assign(n, -1);
@@ -92,8 +114,8 @@ struct FlowSolver {
         ll v = t;
         while (v != s) {
             path.push_back(par[v]);
-            v = edges[par[v]].a;
             add_flow = min(add_flow, edges[par[v]].cap - edges[par[v]].flow);
+            v = edges[par[v]].a;
         }
         ll cost = 0;
         for (ll id : path) {
@@ -104,10 +126,10 @@ struct FlowSolver {
         return {add_flow, cost};
     }
 
-    // initial costs must be non-negative
     pair<ll, ll> ssp(ll s, ll t) {
         ll flow = 0, cost = 0;
-        vector<ll> d(n, 0), par;
+        vector<ll> d, par;
+        ford_bellman(s, d);
         while (dijkstra(s, t, d, par)) {
             auto [add_flow, add_cost] = push_flow(s, t, par);
             flow += add_flow;
