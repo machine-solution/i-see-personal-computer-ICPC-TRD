@@ -23,20 +23,16 @@ void radix_sort(vector<pair<pair<ll, ll>, ll>>& prs) {
     }
 
     vector<pair<pair<ll, ll>, ll>> new_prs(n);
-
     for (auto mem : prs) {
         ll i = mem.first.first;
-
         new_prs[ptr[i]++] = mem;
     }
-    prs = new_prs;
+    swap(prs, new_prs);
 }
 
-vector<ll> suffix_array(string s) {
-    s += '$';
-
+// s already includes last symbol '$' (-inf)
+pair<vector<ll>, vector<ll>> suffix_array(const vector<ll>& s) {
     ll n = s.size();
-
     vector<ll> p(n), c(n);
 
     {  // k == 0
@@ -68,6 +64,7 @@ vector<ll> suffix_array(string s) {
             ll j = ((t - (1ll << k)) % n + n) % n;
             prs[i] = {{c[j], c[t]}, j};
         }
+
         radix_sort(prs);
 
         for (int i = 0; i < n; ++i) {
@@ -86,9 +83,5 @@ vector<ll> suffix_array(string s) {
         ++k;
     }
 
-    vector<ll> ans;
-    ans.reserve(n - 1);
-    for (int i = 1; i < n; ++i)
-        ans.push_back(p[i]);
-    return ans;
+    return {p, c};
 }
