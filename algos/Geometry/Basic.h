@@ -19,6 +19,7 @@
 using namespace std;
 
 using ll = long long;
+using lll = __int128_t;
 using ld = long double;
 using ull = unsigned long long;
 
@@ -105,6 +106,14 @@ struct Point {
         return sign(scalp(a, b));
     }
 
+    lll operator*(const Point& p) const {
+        return (lll)x * p.x + (lll)y * p.y;
+    }
+
+    lll operator^(const Point& p) const {
+        return (lll)x * p.y - (lll)y * p.x;
+    }
+
     friend bool operator==(const Point& a, const Point& b) {
         return sign(a.x - b.x) == 0 && sign(a.y - b.y) == 0;
     }
@@ -142,24 +151,20 @@ bool point_on_line(const Point& p, const Line& line) {
 }
 
 bool point_on_segment(const Point& p, const Segment& seg) {
-    return sign_vectp(p - seg.p2, seg.p1 - seg.p2) == 0 &&
-           sign_scalp(p - seg.p2, seg.p1 - seg.p2) >= 0 &&
+    return sign_vectp(p - seg.p2, seg.p1 - seg.p2) == 0 && sign_scalp(p - seg.p2, seg.p1 - seg.p2) >= 0 &&
            sign_scalp(p - seg.p1, seg.p2 - seg.p1) >= 0;
 }
 
 bool is_segment_intersects_line(const Segment& seg, const Line& line) {
-    return sign_vectp(seg.p1 - line.p1, line.p2 - line.p1) *
-               sign_vectp(seg.p2 - line.p1, line.p2 - line.p1) <=
-           0;
+    return sign_vectp(seg.p1 - line.p1, line.p2 - line.p1) * sign_vectp(seg.p2 - line.p1, line.p2 - line.p1) <= 0;
 }
 
 bool is_segment_intersects_segment(const Segment& seg1, const Segment& seg2) {
     if (sign_vectp(seg1.p2 - seg1.p1, seg2.p2 - seg2.p1) == 0) {
-        return point_on_segment(seg1.p1, seg2) || point_on_segment(seg1.p2, seg2) ||
-               point_on_segment(seg2.p1, seg1) || point_on_segment(seg2.p2, seg1);
+        return point_on_segment(seg1.p1, seg2) || point_on_segment(seg1.p2, seg2) || point_on_segment(seg2.p1, seg1) ||
+               point_on_segment(seg2.p2, seg1);
     }
-    return is_segment_intersects_line(seg1, Line(seg2)) &&
-           is_segment_intersects_line(seg2, Line(seg1));
+    return is_segment_intersects_line(seg1, Line(seg2)) && is_segment_intersects_line(seg2, Line(seg1));
 }
 
 // intersection of supporting lines; segments must be non-parallel
@@ -183,4 +188,26 @@ Point project(const Point& p, const Line& line) {
 // reflection of p over line
 Point reflect(const Point& p, const Line& line) {
     return project(p, line) * 2 - p;
+}
+
+bool small(ld a) {
+    return abs(a) < 1e-6;
+}
+bool le0(ld a) {
+    return a < -1e-6;
+}
+
+bool intersect(Point a, Point b, Point c, Point d) {
+    Point ab = b - a;
+    Point cd = d - c;
+    ld det = ab ^ cd;
+    if (small(det)) {
+        return false;
+    }
+    ld t = ((c - a) ^ cd) / det;
+    ld u = ((c - a) ^ ab) / det;
+    if (le0(t) or le0(1 - t)) {
+        return false;
+    }
+    return u >= 1e-5 and u <= 1 - 1e-5;
 }
